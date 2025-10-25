@@ -36,7 +36,7 @@ call clock%tic()
 do i = 1,nx
     do j = 1,ny
         do k = 1,nz
-            array4(i,j,k) = 2.5*array1(i,j,k) + array2(i,j,k)
+            array4(i,j,k) = 0.
         enddo
     enddo
 enddo
@@ -56,7 +56,7 @@ array4 = 1.
 
 call clock%tic()
 
-array4 = 2.5*array1+array2
+array4 = 0.
 
 call clock%toc()
 print*, array4(2,2,2), array4(4,2,5), array4(20,2,1)
