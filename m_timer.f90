@@ -1,5 +1,5 @@
 module m_timer
-USE OMP_LIB
+USE omp_lib
 use,intrinsic :: iso_fortran_env, only : int32,int64,real32,dp=>real64
 use,intrinsic :: iso_fortran_env, only : stdout=>OUTPUT_UNIT
 implicit none
