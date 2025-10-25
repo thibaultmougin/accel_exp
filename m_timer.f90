@@ -96,7 +96,7 @@ integer(kind=int64)                      :: count_rate
    if(present(string)) write( lun_,gen ) string
 
    if(elapsed_date_and_time >= 0)then
-      write( lun_,'(a,f0.3)')    'Elapsed dat  (sec) ::',elapsed_date_and_time
+      write( lun_,'(a,1x,g0.4)')    'Elapsed dat  (sec) ::',elapsed_date_and_time
    else
       write( lun_,'(a)')         'Elapsed dat  (sec) :: N/A'
    endif
@@ -105,9 +105,9 @@ integer(kind=int64)                      :: count_rate
    call system_clock(count_rate=count_rate) ! Find the time rate
    write(biggest,'("(a,f0.",i0,")")')ceiling(log10(real(count_rate,kind=dp)))
 
-   write( lun_,biggest)          'Elapsed time (sec) ::',elapsed_time
-   write( lun_,gen)              'CPU time     (sec) ::',cpu_time
-   write( lun_,'(a,1x,f0.2)')    'Percentage         ::',(cpu_time/elapsed_time)*100
+   write( lun_,'(a,1x,g0.4)')          'Elapsed time (sec) ::',elapsed_time
+   write( lun_,'(a,1x,g0.4)')              'CPU time     (sec) ::',cpu_time
+   write( lun_,'(a,1x,g0.4)')    'Percentage         ::',(cpu_time/elapsed_time)*100
 
 end subroutine clock_print
 

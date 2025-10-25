@@ -3,20 +3,18 @@ use m_timer,only : timer, say_hello
 use OMP_LIB
 implicit none
 
-
-real :: a, b, c
 real, allocatable :: array1(:,:,:),  array2(:,:,:),  array4(:,:,:)
 real, allocatable :: array3(:)
-integer,parameter           :: nx = 200
-integer,parameter           :: ny = 200
-integer,parameter           :: nz = 1000
+integer,parameter           :: nx = 20
+integer,parameter           :: ny = 20
+integer,parameter           :: nz = 100
 type(timer)                 :: clock
 integer                     :: i,j,k
 character(len=*),parameter  :: all='(*(g0,1x))'
 
 clock=timer()
 
-print all, 'test 1'
+print all, 'Initialisation à 0 via boucle sur i,j,k'
 print all, ''
 
 allocate(array1(nx,ny,nz))
@@ -28,8 +26,6 @@ array1 = 1.
 array2 = 1.
 array4 = 1.
 
-a = 3.
-
 call clock%tic()
 
 !$OMP PARALLEL DO
@@ -40,14 +36,13 @@ do i = 1,nx
         enddo
     enddo
 enddo
-call clock%toc()
-print*, array4(2,2,2), array4(4,2,5), array4(20,2,1)
 
+call clock%toc()
 
 call clock%print()
 
 print all, ''
-print all, 'test 2'
+print all, 'Initialisation à 0 via A = 0.'
 print all, ''
 
 array1 = 1.
@@ -56,10 +51,53 @@ array4 = 1.
 
 call clock%tic()
 
+!$OMP PARALLEL
 array4 = 0.
+!$OMP END PARALLEL
 
 call clock%toc()
-print*, array4(2,2,2), array4(4,2,5), array4(20,2,1)
+
+call clock%print()
+
+print all, ''
+print all, 'A = 2*B + C via boucle sur i,j,k'
+print all, ''
+
+array1 = 1.
+array2 = 1.
+array4 = 1.
+
+call clock%tic()
+
+!$OMP PARALLEL DO
+do i = 1,nx
+    do j = 1,ny
+        do k = 1,nz
+            array4(i,j,k) = 2*array2(i,j,k) + array1(i,j,k)
+        enddo
+    enddo
+enddo
+
+call clock%toc()
+
+call clock%print()
+
+
+print all, ''
+print all, 'A = 2*B + C'
+print all, ''
+
+array1 = 1.
+array2 = 1.
+array4 = 1.
+
+call clock%tic()
+
+!$OMP PARALLEL
+array4 = 2*array2 + array1
+!$OMP END PARALLEL
+
+call clock%toc()
 
 call clock%print()
 
