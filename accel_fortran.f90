@@ -1,4 +1,4 @@
-program testit
+program accel_fortran
 use m_timer,only : timer
 use OMP_LIB
 implicit none
@@ -160,43 +160,55 @@ call clock%toc()
 call clock%print()
 
 print all, ''
-print all, 'Produit de matrices via boucle'
+print all, 'where indpre à la main'
 print all, ''
 
-array3 = 2.
-array5 = 3.
+array1 = 1.
+array1(1,:,:) = -1.
+array1(-1,:,:) = -1.
+array1(:,1,:) = -1.
+array1(:,-1,:) = -1.
+array1(:,:,1) = -1.
+array1(:,:,-1) = -1.
+
+call clock%tic()
+
+array4 = 0.
+
+!$OMP PARALLEL DO
+do i = 1,nx
+    do j = 1,ny
+        do k = 1,nz
+            if (array1(i,j,k) > 0.) then
+                array4(i,j,k) = 0.1
+            end if
+        enddo
+    enddo
+enddo
+
+print*, "sum", sum(array4)
+
+call clock%toc()
+
+call clock%print()
+
+print all, ''
+print all, 'where indpre'
+print all, ''
+
+array4 = 0.
 
 call clock%tic()
 
 !$OMP PARALLEL DO
-do i = 1, nx   
-    do j = 1, ny
-        array6(i, j) = sum(array3(i,:)*array5(:,j))
-    enddo
-enddo
+where (array1 > 0.)
+    array4 = 0.1
+end where
+
+print*, "sum", sum(array4)
 
 call clock%toc()
 
 call clock%print()
 
-
-print all, ''
-print all, 'Produit de matrices via matmul'
-print all, ''
-
-array3 = 2.
-array5 = 3.
-array6 = 0.
-
-call clock%tic()
-
-!$OMP PARALLEL
-array6 = matmul(array3, array5)
-!$OMP END PARALLEL
-
-call clock%toc()
-
-call clock%print()
-
-
-end program testit
+end program accel_fortran
